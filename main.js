@@ -3,16 +3,22 @@
 //entrega buscar libros por nombre o por autor
 
 
+// modificar titulo
+let titulo = document.getElementById("titulo")
+console.log(titulo.innerText)
+
+titulo.innerHTML = "<h1> Libreria Cosas Necesarias</h1> <h2> Buscar Libro </h2>"
+console.log(titulo.innerHTML)
+
 // constructor
-
-
+let iva = 1.19
 const Libro = function(nombre,autor,editorial,paginas,precio, stock){
     this.nombre =nombre
     this.autor = autor
     this.editorial = editorial
     this.paginas = paginas
     this.precio = precio
-    this.precioConIva = precio * 1.19
+    this.precioConIva = precio * iva
     this.stock = stock;
 
 }
@@ -34,45 +40,64 @@ const libro12 = new Libro("el tao del jeet kune do","bruce lee","dojo",300,45000
 //array
 const libros =[libro1,libro2,libro3,libro4,libro5,libro6,libro7,libro8,libro9,libro10,libro11,libro12]
 
+/*desestructuración que solo la deje como comentario, porque no le ví utilidad  en mi proyecto
+const {nombre,precioConIva} = libro1
+console.log(nombre)
+console.log(precioConIva)*/
 
-// buscar libro por nombre
-function buscarLibro(){
-    let busqueda = prompt("ingrese el nombre del libro")
-    let resultado= libros.filter(  (libro) => libro.nombre.includes(busqueda))
-    if (resultado.length > 0){
-        console.table(resultado)
-    }else{
-        alert("no se encontró el libro " + busqueda)
-    }
+
+//Función para mostrar resultados en el DOM
+function mostrarResultadosEnDOM(resultados) {
+    const resultadoDiv = document.getElementById("resultados");
+    resultadoDiv.innerHTML = ""; 
+
+    if (resultados.length > 0) {
+        resultados.forEach((libro) => {
+            const libroDiv = document.createElement("div");
+            libroDiv.innerHTML = `<p>Nombre: ${libro.nombre}</p>
+                                  <p>Autor: ${libro.autor}</p>
+                                  <p>Editorial: ${libro.editorial}</p>
+                                  <p>Páginas: ${libro.paginas}</p>
+                                  <p>Precio: ${libro.precio}</p>
+                                  <p>Precio con IVA: ${libro.precioConIva}</p>
+                                  <p>Stock: ${libro.stock}</p>
+                                 <hr>`;
+            resultadoDiv.appendChild(libroDiv);
+
+            /*console.log(...libros) spread de arrays  lo puse como comentario porque no le veía el sentido en mi proyecto*/
+            
+        });
+    }}
+
+// Función para buscar libro por nombre
+function buscarLibro() {
+    let busqueda = prompt("Ingrese el nombre del libro ");
+    let resultado = libros.filter((libro) => libro.nombre.includes(busqueda));
+    //operador ternario
+    resultado.length > 0 ? (mostrarResultadosEnDOM(resultado), localStorage.setItem("resultados", JSON.stringify(resultado)))
+        : alert("No se encontró el libro " + busqueda);
 }
 
-// buscar libro por autor
+//Función para buscar libro por autor
 function buscarAutor(){
-    let busqueda = prompt("ingrese el nombre del autor")
-    let resultado= libros.filter(  (libro) => libro.autor.includes(busqueda))
-    if (resultado.length > 0){
-        console.table(resultado)
-    }else{
-        alert("no se encontró el autor " + busqueda)
-    }
+    let busqueda = prompt("ingrese el nombre del autor ");
+    let resultado = libros.filter((libro) => libro.autor.includes(busqueda));
+    //operador ternario
+    resultado.length > 0 ?(mostrarResultadosEnDOM(resultado),localStorage.setItem("resultados", JSON.stringify(resultado)))
+    : alert ("no se encontró el autor" + busqueda);
 }
 
-// cantidad de todos los libros en stock
-function LibrosTotal(){
-    console.table(libros);
-}
+//Eventos para mostrar resultados en el DOM
+let boton = document.getElementById("nombre");
+boton.addEventListener("click", buscarLibro);
 
- 
-//botones
-let boton = document.getElementById("nombre")
-boton.addEventListener("click", buscarLibro)
+let boton2 = document.getElementById("autor");
+boton2.addEventListener("click", buscarAutor);
 
-let boton2 =document.getElementById("autor")
-boton2.addEventListener("click", buscarAutor)
-
-let boton3 = document.getElementById("total")
-boton3.addEventListener("click", LibrosTotal)
+let boton3 = document.getElementById("total");
+boton3.addEventListener("click", () => mostrarResultadosEnDOM(libros)); 
 
 
-// buscar por indice del array 
-//console.log(libro3.nombre)
+
+
+
